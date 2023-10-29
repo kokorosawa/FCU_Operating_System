@@ -71,9 +71,9 @@ static void hello_exit(void)
     {
         // 印出資料
         if (info->prio <= 70)
-            printk(KERN_ALERT "%-15s %-5d %-5ld %-5d %-5d\n", info->comm, info->pid, info->state, info->prio, info->policy);
+            printk(KERN_EMERG "KERN_EMERG: %-15s %-5d %-5ld %-5d %-5d\n", info->comm, info->pid, info->state, info->prio, info->policy);
         else
-            printk(KERN_INFO "%-15s %-5d %-5ld %-5d %-5d\n", info->comm, info->pid, info->state, info->prio, info->policy);
+            printk(KERN_INFO "KERN_INFO: %-15s %-5d %-5ld %-5d %-5d\n", info->comm, info->pid, info->state, info->prio, info->policy);
         // 從 hash table 中刪除資料
         hash_del(&info->node);
     }
