@@ -13,9 +13,12 @@ struct Process
 // 計算平均周轉時間和平均等待時間的函數
 float calulateAvgTimes(struct Process processes[], int n, int timeQuantum)
 {
-    int waitingTime[n], turnaroundTime[n],schedule[n];
+    int waitingTime[n], turnaroundTime[n], schedule[n];
     int queue[n];
     memset(queue, -1, n * sizeof(queue[0]));
+    int lastqueue[n];
+    memset(lastqueue, 0, n * sizeof(lastqueue[0]));
+    int minarrivalTime = 100;
     // 初始化等待時間和周轉時間
     for (int i = 0; i < n; i++)
     {
@@ -33,41 +36,17 @@ float calulateAvgTimes(struct Process processes[], int n, int timeQuantum)
     int currentTime = 0;
     int completed = 0;
     int queueindex = 0;
+    int init = 1;
 
-    // while (queueindex == 0)
-    // {
-    //     for (int i = 0; i < queueindex; i++)
-    //     {
-    //         remainingBurstTime[queue[i]] = processes[queue[i]].burstTime;
-    //         if (remainingBurstTime[queue[i]] <= timeQuantum)
-    //         {
-    //             printf("currentTime = %d\n", currentTime);
-    //             currentTime += remainingBurstTime[queue[i]];
-    //             printf("currentTime = %d\n", currentTime);
-    //             turnaroundTime[queue[i]] = currentTime - processes[queue[i]].arrivalTime;
-    //             waitingTime[queue[i]] = turnaroundTime[queue[i]] - processes[queue[i]].burstTime;
-    //             remainingBurstTime[queue[i]] = 0;
-    //             completed++;
-    //         }
-    //         else
-    //         {
-    //             printf("currentTime = %d\n", currentTime);
-    //             currentTime += timeQuantum;
-    //             remainingBurstTime[queue[i]] -= timeQuantum;
-    //         }
-    //     }
-    // }
-
-    //實現 Round Robin 排班
     while (completed < n)
     {
         for (int i = 0; i < n; i++)
         {
-            printf("%d %d %d %d\n", queue[0], queue[1], queue[2], queue[3]);
-            if (processes[i].arrivalTime <= currentTime && schedule[i] == 0) 
+            // printf("%d %d %d %d\n", queue[0], queue[1], queue[2], queue[3]);
+            if (processes[i].arrivalTime <= currentTime && schedule[i] == 0)
             {
                 schedule[i] = 1;
-                printf("processes[i].arrivalTime = %d   %d\n", processes[i].arrivalTime, processes[i].id);
+                // printf("processes[i].arrivalTime = %d   %d\n", processes[i].arrivalTime, processes[i].id);
                 queue[queueindex] = processes[i].id;
                 queueindex++;
             }
@@ -75,9 +54,9 @@ float calulateAvgTimes(struct Process processes[], int n, int timeQuantum)
             {
                 if (remainingBurstTime[queue[i]] <= timeQuantum)
                 {
-                    printf("currentTime = %d\n", currentTime);
+                    // printf("currentTime = %d\n", currentTime);
                     currentTime += remainingBurstTime[queue[i]];
-                    printf("currentTime = %d\n", currentTime);
+                    // printf("currentTime = %d\n", currentTime);
                     turnaroundTime[queue[i]] = currentTime - processes[queue[i]].arrivalTime;
                     waitingTime[queue[i]] = turnaroundTime[queue[i]] - processes[queue[i]].burstTime;
                     remainingBurstTime[queue[i]] = 0;
@@ -86,7 +65,7 @@ float calulateAvgTimes(struct Process processes[], int n, int timeQuantum)
                 }
                 else
                 {
-                    printf("currentTime = %d\n", currentTime);
+                    // printf("currentTime = %d\n", currentTime);
                     currentTime += timeQuantum;
                     remainingBurstTime[queue[i]] -= timeQuantum;
                 }
@@ -94,30 +73,6 @@ float calulateAvgTimes(struct Process processes[], int n, int timeQuantum)
         }
     }
 
-        // 實現 Round Robin 排班
-    // while (completed < n)
-    // {
-    //     for (int i = 0; i < n; i++)
-    //     {
-    //         if (remainingBurstTime[i] > 0)
-    //         {
-    //             if (remainingBurstTime[i] <= timeQuantum)
-    //             {
-    //                 currentTime += remainingBurstTime[i];
-    //                 turnaroundTime[i] = currentTime - processes[i].arrivalTime;
-    //                 waitingTime[i] = turnaroundTime[i] - processes[i].burstTime;
-    //                 processes[i].finishTime = currentTime;
-    //                 remainingBurstTime[i] = 0;
-    //                 completed++;
-    //             }
-    //             else
-    //             {
-    //                 currentTime += timeQuantum;
-    //                 remainingBurstTime[i] -= timeQuantum;
-    //             }
-    //         }
-    //     }
-    // }
     // 計算平均周轉時間和平均等待時間
     float avgTurnaroundTime = 0, avgWaitingTime = 0;
     for (int i = 0; i < n; i++)
@@ -140,7 +95,7 @@ float calulateAvgTimes(struct Process processes[], int n, int timeQuantum)
     }
 
     // 印出結果
-    printf("\nAverage Turnaround Time = %.2f\n", avgTurnaroundTime);
+    printf("Average Turnaround Time = %.2f\n", avgTurnaroundTime);
     printf("Average Waiting Time = %.2f\n", avgWaitingTime);
 
     return avgWaitingTime;
@@ -184,18 +139,21 @@ int main()
 
     // float minwaitingTime = 100;
     // int timeQuantum = 0;
-    // for(int i = 1; i < 50; i++) {
+    // for (int i = 1; i <= 18; i++)
+    // {
+    //     printf("----------------------------------------\n");
     //     printf("timeQuantum = %d\n", i);
     //     float res = calulateAvgTimes(processes, n, i);
-    //     if(res < minwaitingTime){
+    //     if (res < minwaitingTime)
+    //     {
     //         minwaitingTime = res;
     //         timeQuantum = i;
     //     }
     // }
     // printf("----------------------------------------\n");
     // printf("minwaitingTime = %f\n", minwaitingTime);
-    // printf("timeQuantum = %d\n", timeQuantum);d
-    //calulateAvgTimes(processes, n, 8);
-    calulateAvgTimes(processes, n, 8);
+    // printf("timeQuantum = %d\n", timeQuantum);
+    // calulateAvgTimes(processes, n, 8);
+    calulateAvgTimes(processes, n, 18);
     return 0;
 }
